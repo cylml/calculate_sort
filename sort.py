@@ -181,10 +181,10 @@ def heap_demo():
         print(heapq.heappop(li), end=",")
 
 
-def random_n(length=10000):
+def random_n(length=10000, maxs=666666):
     lib = []
     for i in range(length):
-        lib.append(random.randint(0, 666666))
+        lib.append(random.randint(0, maxs))
     return lib
 
 
