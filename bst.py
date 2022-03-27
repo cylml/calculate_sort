@@ -109,16 +109,62 @@ class BST:
                     return p.r_child
                 p = p.r_child
 
-    # def query_no_rec1(self, val):
-    #     p = self.root
-    #     while p:
-    #         if p.data > val:
-    #             return p.l_child
-    #         elif p.data < val:
-    #             return p.r_child
-    #         else:
-    #             return p
-    #     return None
+    # 移除的节点为叶子节点
+    def __remove_node_1(self, node):
+        if not node:
+            self.root = None
+        if node.parent.data > node.data:
+            node.parent.l_child = None
+        else:
+            node.parent.r_child = None
+
+    # 移除的节点存在一个左子节点
+    def __remove_node_21(self, node):
+        if not node:
+            self.root = node.l_child
+            node.l_child.parent = None
+        elif node == node.parent.l_child:
+            node.l_child.parent = node.parent
+            node.parent.l_child = node.l_child
+        else:
+            node.l_child.parent = node.parent
+            node.parent.r_child = node.l_child
+
+    # 移除的节点存在一个右子节点
+    def __remove_node_22(self, node):
+        if not node:
+            self.root = node.r_child
+            node.r_child.parent = None
+        elif node == node.parent.l_child:
+            node.r_child.parent = node.parent
+            node.parent.l_child = node.r_child
+        else:
+            node.r_child.parent = node.parent
+            node.parent.r_child = node.r_child
+
+    def delete(self, val):
+        node = self.query_no_rec(val)
+        if not node:
+            return False
+
+        if node.l_child is None and node.r_child is None:
+            self.__remove_node_1(node)
+        # elif node.l_child and node.r_child is None:
+        elif not node.r_child:
+            self.__remove_node_21(node)
+        elif not node.l_child:
+            self.__remove_node_22(node)
+        else:
+            min_node = node.r_child
+            while min_node.l_child:
+                min_node = min_node.l_child
+            node.data = min_node.data
+            if min_node.r_child:
+                min_parent = min_node.parent
+                min_parent.l_child = min_node.r_child
+                # min_node.r_child = node.r_child
+            del node
+
 
     # FIXME 删不掉头节点
     def pop(self, val):
@@ -166,7 +212,7 @@ class BST:
 
 
 bst = BST([17, 5, 35, 2, 11, 9, 16, 7, 8, 29, 38])
-bst.pop(17)
+bst.delete(17)
 print()
 bst.level_order(bst.root)
 print()
