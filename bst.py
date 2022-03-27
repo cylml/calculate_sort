@@ -213,8 +213,9 @@ class BST:
 
 bst = BST([17, 5, 35, 2, 11, 9, 16, 7, 8, 29, 38])
 bst.delete(17)
-print()
-bst.level_order(bst.root)
+# print()
+# bst.level_order(bst.root)
+bst.in_order(bst.root)
 print()
 # print(bst.query(bst.root, 2).data)
 # print(bst.query_no_rec(17).data)
