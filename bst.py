@@ -1,3 +1,6 @@
+from collections import deque
+
+
 class BiTreeNode:
     def __init__(self, data):
         self.data = data
@@ -12,6 +15,17 @@ class BST:
         if li:
             for val in li:
                 self.insert_no_rec(val)
+
+    def level_order(self, root):
+        queue = deque()
+        queue.append(root)
+        while len(queue) > 0:
+            node = queue.popleft()
+            print(node.data, end=",")
+            if node.l_child:
+                queue.append(node.l_child)
+            if node.r_child:
+                queue.append(node.r_child)
 
     def insert(self, node, val):
         if not node:
@@ -66,6 +80,95 @@ class BST:
             self.post_order(root.r_child)
             print(root.data, end=",")
 
+    def query(self, node: BiTreeNode, val):
+        if not node:
+            return None
+        if node.data > val:
+            return self.query(node.l_child, val)
+        elif node.data < val:
+            return self.query(node.r_child, val)
+        else:
+            print(node.data)
+            return node
 
-bst = BST([7, 6, 9, 1, 5, 2, 3])
-bst.in_order(bst.root)
+    def query_no_rec(self, val) -> BiTreeNode:
+        p = self.root
+        if p.data == val:
+            return p
+        while p:
+            if p.data > val:
+                if not p.l_child:
+                    return
+                if p.l_child.data == val:
+                    return p.l_child
+                p = p.l_child
+            elif p.data < val:
+                if not p.r_child:
+                    return
+                if p.r_child.data == val:
+                    return p.r_child
+                p = p.r_child
+
+    # def query_no_rec1(self, val):
+    #     p = self.root
+    #     while p:
+    #         if p.data > val:
+    #             return p.l_child
+    #         elif p.data < val:
+    #             return p.r_child
+    #         else:
+    #             return p
+    #     return None
+
+    # FIXME 删不掉头节点
+    def pop(self, val):
+        node = self.query_no_rec(val)
+        if node:
+            # flag = False
+            parent = node.parent
+            # if not parent:
+            #     self.root = None
+            # 节点为最后一个
+            if node.l_child is None and node.r_child is None:
+                if parent.data > node.data:
+                    parent.l_child = None
+                    # node.parent = None
+                    del node
+                else:
+                    parent.r_child = None
+                    node.parent = None
+                    del node
+            elif node.l_child and node.r_child:
+                r_c = node.r_child
+                while r_c.l_child:
+                    r_c = r_c.l_child
+                if r_c.r_child:
+                    c_p = r_c.parent
+                    c_p.l_child = r_c.r_child
+                    r_c.r_child = node.r_child
+                # r_c.parent = parent
+                if parent.data > node.data:
+                    parent.l_child = r_c
+                else:
+                    parent.r_child = r_c
+                r_c.l_child = node.l_child
+                del node
+            else:
+                if node.l_child:
+                    c_node = node.l_child
+                else:
+                    c_node = node.r_child
+                if parent.data > node.data:
+                    node.parent.l_child = c_node
+                else:
+                    node.parent.r_child = c_node
+                del node
+
+
+bst = BST([17, 5, 35, 2, 11, 9, 16, 7, 8, 29, 38])
+bst.pop(17)
+print()
+bst.level_order(bst.root)
+print()
+# print(bst.query(bst.root, 2).data)
+# print(bst.query_no_rec(17).data)
